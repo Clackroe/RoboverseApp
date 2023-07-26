@@ -11,12 +11,9 @@ export default function TeamPage() {
     teamName = "GhostTeam";
   }
 
-  const [team, isLoading, isError] = api.teams.getTeamByName.useQuery({ name: teamName });
+  const team = api.teams.getTeamByName.useQuery({ name: teamName });
 
-
-  
-
-  else if (team.data == null) {
+  if (team.data == null) {
     return (
       <div className=" flex items-center justify-center text-5xl italic">
         <div className="fles flex-col items-center justify-center ">
