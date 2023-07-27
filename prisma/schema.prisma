@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  // engineType = "binary" // may need to uncomment this for Docker
 }
 
 datasource db {

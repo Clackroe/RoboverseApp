@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 
 import { api } from "~/utils/api";
+import EqMatchList from "../components/EqMatchList";
 
 export default function TeamPage() {
   const router = useRouter();
@@ -27,8 +28,8 @@ export default function TeamPage() {
     return (
       <>
         <div className="flex items-center justify-center">
-          <div className="mx-20 mt-4 flex-grow self-center border-b-2 pb-4 text-center  text-3xl text-slate-300">
-            {team.data.name}
+          <div className="mx-20 mt-4 flex-grow self-center  pb-4 text-center  text-3xl text-slate-300">
+            <EqMatchList teamName={teamName} />
           </div>
         </div>
       </>

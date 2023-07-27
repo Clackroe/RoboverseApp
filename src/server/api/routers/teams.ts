@@ -28,4 +28,40 @@ export const teamsRouter = createTRPCRouter({
         });
       return team;
     }),
+
+  getTeamById: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(({ ctx, input }) => {
+      const team = ctx.prisma.team
+        .findUnique({
+          where: {
+            id: input.id,
+          },
+        })
+        .catch(() => {
+          return null;
+        });
+      return team;
+    }),
+
+  getTeamEqMatches: publicProcedure
+    .input(z.object({ name: z.string() }))
+    .query(({ ctx, input }) => {
+      const matches = ctx.prisma.team.findUnique({
+        include: {
+          Equation: {
+            include: {
+              matchesWithLoss: true,
+              matchesWithWin: true,
+              createdByUser: true,
+              Team: true,
+            },
+          },
+        },
+        where: {
+          name: input.name,
+        },
+      });
+      return matches;
+    }),
 });
