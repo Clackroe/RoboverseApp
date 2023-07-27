@@ -3,8 +3,11 @@ import { useRouter } from "next/router";
 import { api } from "~/utils/api";
 import Image from "next/image";
 import Link from "next/link";
+import { useSession, signIn, signOut } from "next-auth/react";
 
 export default function Profile() {
+  const { data: sessionData } = useSession();
+
   const router = useRouter();
   let userName = router.query.user;
   if (!userName || Array.isArray(userName)) {
@@ -45,6 +48,15 @@ export default function Profile() {
               {data.team ? data.team.name : "No Team Found"}
             </Link>
           </h1>
+
+          {sessionData?.user.id === data.id ? (
+            <button
+              className="rounded-md px-1 text-slate-500 hover:text-red-800 hover:underline"
+              onClick={() => void signOut()}
+            >
+              Log Out
+            </button>
+          ) : null}
         </div>
       </div>
     </>

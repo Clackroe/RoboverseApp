@@ -32,4 +32,27 @@ export const usersRouter = createTRPCRouter({
       });
       return user;
     }),
+
+  getUserById: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(({ input, ctx }) => {
+      const user = ctx.prisma.user.findUnique({
+        where: {
+          id: input.id,
+        },
+        include: {
+          team: true,
+        },
+      });
+      return user;
+    }),
+
+  getAllUsers: publicProcedure.query(({ ctx }) => {
+    const users = ctx.prisma.user.findMany({
+      include: {
+        team: true,
+      },
+    });
+    return users;
+  }),
 });
