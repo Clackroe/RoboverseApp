@@ -2,7 +2,7 @@ import Navbutton from "./Navbutton";
 import { usePathname } from "next/navigation";
 import ProfilePicture from "./ProfilePicture";
 
-const navPages = ["Teams", "Team", "Matches"];
+const navPages = ["Teams", "Play", "Matches"];
 
 export default function Navbar() {
   const pathname = usePathname();
