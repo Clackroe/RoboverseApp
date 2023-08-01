@@ -42,7 +42,8 @@ export default function UserListTeam(props: { teamID: string }) {
                   <td className="flex items-center justify-center px-4 py-2 text-center hover:underline">
                     <ProfileNamePic
                       name={user.name}
-                      image={user.image ? user.image : ""}
+                      image={user.image ? user.image : null}
+                      showName={true}
                     />
                   </td>
                   <td className="px-4 py-2 text-center">

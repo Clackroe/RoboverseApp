@@ -45,6 +45,7 @@ export default function UsersList() {
                     <ProfileNamePic
                       name={user.name ? user.name : "NoName"}
                       image={user.image ? user.image : ""}
+                      showName={true}
                     />
                   </td>
                   <td className="px-4 py-2 text-center hover:underline">

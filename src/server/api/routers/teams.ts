@@ -27,12 +27,8 @@ export const teamsRouter = createTRPCRouter({
             id: input.id,
           },
           include: {
-            Equation: true,
-            User: {
-              include: {
-                Equation: true,
-              },
-            },
+            Equation: { include: { User: true, TeamInEquationMatch: true } },
+            User: true,
           },
         })
         .catch(() => {
@@ -53,7 +49,7 @@ export const teamsRouter = createTRPCRouter({
             name: input.name,
           },
           include: {
-            Equation: true,
+            Equation: { include: { User: true, TeamInEquationMatch: true } },
             User: true,
           },
         })
