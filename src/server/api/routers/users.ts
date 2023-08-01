@@ -13,7 +13,7 @@ export const usersRouter = createTRPCRouter({
         id: userId,
       },
       include: {
-        team: true,
+        Team: true,
       },
     });
     return user;
@@ -21,13 +21,28 @@ export const usersRouter = createTRPCRouter({
 
   getUserByName: publicProcedure
     .input(z.object({ name: z.string() }))
-    .query(({ input, ctx }) => {
-      const user = ctx.prisma.user.findUnique({
+    .query(async ({ input, ctx }) => {
+      const user = await ctx.prisma.user.findUnique({
         where: {
           name: input.name,
         },
         include: {
-          team: true,
+          Team: true,
+        },
+      });
+      return user;
+    }),
+
+  getUsersByTeamID: publicProcedure
+    .input(z.object({ teamId: z.string() }))
+    .query(async ({ input, ctx }) => {
+      const user = await ctx.prisma.user.findMany({
+        where: {
+          team_id: input.teamId,
+        },
+        include: {
+          Team: true,
+          Equation: true,
         },
       });
       return user;
@@ -41,16 +56,17 @@ export const usersRouter = createTRPCRouter({
           id: input.id,
         },
         include: {
-          team: true,
+          Team: true,
         },
       });
       return user;
     }),
 
-  getAllUsers: publicProcedure.query(({ ctx }) => {
-    const users = ctx.prisma.user.findMany({
+  getAllUsers: publicProcedure.query(async ({ ctx }) => {
+    const users = await ctx.prisma.user.findMany({
       include: {
-        team: true,
+        Team: true,
+        Equation: true,
       },
     });
     return users;

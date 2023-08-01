@@ -23,12 +23,12 @@ export default function ProfilePicture(props: {
             >
               <Image
                 alt={"Profile Picture"}
-                className="h-16 w-16 rounded-full"
+                className="rounded-full"
                 src={
                   sessionData.data.user.image &&
                   typeof sessionData.data.user.image == "string"
                     ? sessionData.data.user.image
-                    : "/spinner.svg"
+                    : "/GhostUser.png"
                 }
                 width={props.width ? props.width : 64}
                 height={props.height ? props.height : 64}

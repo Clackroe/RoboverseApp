@@ -1,6 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
-  // engineType = "binary" // may need to uncomment this for Docker
+  provider        = "prisma-client-js"
+  previewFeatures = ["views"]
 }
 
 datasource db {
@@ -8,114 +8,9 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Job {
-  id        String            @id @default(uuid()) @db.Uuid
-  createdAt DateTime          @default(now()) @db.Timestamp(6)
-  team_id   String            @db.Uuid
-  payload   String
-  status    enums_jobs_status
-  error     String?
-  team      Team              @relation(fields: [team_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_user_team_id")
-}
-
-model TrainedMatch {
-  id             String    @id @default(uuid()) @db.Uuid
-  team1Id        String    @db.Uuid
-  team1ModelId   String    @db.Uuid
-  team2Id        String    @db.Uuid
-  team2ModelId   String    @db.Uuid
-  type           String    @db.VarChar(255)
-  timestamp      DateTime? @db.Timestamp(6)
-  team1Score     Int?
-  team2Score     Int?
-  winningTeamId  String?   @db.Uuid
-  winningModelId String?   @db.Uuid
-  losingTeamId   String?   @db.Uuid
-  losingModelId  String?   @db.Uuid
-  team1          Team      @relation("match_team1ToTeam", fields: [team1Id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  team1Model     Model     @relation("match_team1ModelToModel", fields: [team1ModelId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  team2          Team      @relation("match_team2ToTeam", fields: [team2Id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  team2Model     Model     @relation("match_team2ModelToModel", fields: [team2ModelId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  losingModel    Model?    @relation("match_losingModelToModel", fields: [losingModelId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "match_loser_model_fkey")
-  losingTeam     Team?     @relation("match_losingTeamToTeam", fields: [losingTeamId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "match_loser_team_fkey")
-  winningModel   Model?    @relation("match_winningModelToModel", fields: [winningModelId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "match_winner_model_fkey")
-  winningTeam    Team?     @relation("match_winningTeamToTeam", fields: [winningTeamId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "match_winner_team_fkey")
-}
-
-model EquationMatch {
-  id                String    @id @default(uuid()) @db.Uuid
-  team1Id           String    @db.Uuid
-  team1EquationId   String    @db.Uuid
-  team2Id           String    @db.Uuid
-  team2EquationId   String    @db.Uuid
-  type              String    @db.VarChar(255)
-  timestamp         DateTime? @db.Timestamp(6)
-  team1Score        Int?
-  team2Score        Int?
-  winningTeamId     String?   @db.Uuid
-  winningEquationId String?   @db.Uuid
-  losingTeamId      String?   @db.Uuid
-  losingEquationId  String?   @db.Uuid
-  team1Equation     Equation  @relation("equation_match_team1EquationToEquation", fields: [team1EquationId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  team1             Team      @relation("equation_match_team1ToTeam", fields: [team1Id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  team2Equation     Equation  @relation("equation_match_team2EquationToEquation", fields: [team2EquationId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  team2             Team      @relation("equation_match_team2ToTeam", fields: [team2Id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  losingEquation    Equation? @relation("equation_match_losingEquationToEquation", fields: [losingEquationId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "equation_match_loser_equation_fkey")
-  losingTeam        Team?     @relation("equation_match_losingTeamToTeam", fields: [losingTeamId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "equation_match_loser_team_fkey")
-  winningEquation   Equation? @relation("equation_match_winningEquationToEquation", fields: [winningEquationId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "equation_match_winner_equation_fkey")
-  winningTeam       Team?     @relation("equation_match_winningTeamToTeam", fields: [winningTeamId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "equation_match_winner_team_fkey")
-}
-
-model Model {
-  id     String @id @default(uuid()) @db.Uuid
-  teamId String @db.Uuid
-  name   String @db.VarChar(255)
-  url    String @db.VarChar(255)
-
-  team                   Team           @relation(fields: [teamId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_model_team_id")
-  trainedMatchesAsTeam1  TrainedMatch[] @relation("match_team1ModelToModel")
-  trainedMatchesAsTeam2  TrainedMatch[] @relation("match_team2ModelToModel")
-  trainedMatchesWithLoss TrainedMatch[] @relation("match_losingModelToModel")
-  trainedMatchesWithWin  TrainedMatch[] @relation("match_winningModelToModel")
-}
-
-model Team {
-  id                      String          @id @default(uuid()) @db.Uuid
-  name                    String          @unique @db.VarChar(255)
-  Equation                Equation[]
-  equationMatchesAsTeam1  EquationMatch[] @relation("equation_match_team1ToTeam")
-  equationMatchesAsTeam2  EquationMatch[] @relation("equation_match_team2ToTeam")
-  equationMatchesWithLoss EquationMatch[] @relation("equation_match_losingTeamToTeam")
-  equationMatchesWithWin  EquationMatch[] @relation("equation_match_winningTeamToTeam")
-  jobs                    Job[]
-  models                  Model[]
-  trainedMatchesAsTeam1   TrainedMatch[]  @relation("match_team1ToTeam")
-  trainedMatchesAsTeam2   TrainedMatch[]  @relation("match_team2ToTeam")
-  trainedMatchesWithLoss  TrainedMatch[]  @relation("match_losingTeamToTeam")
-  trainedMatchesWithWin   TrainedMatch[]  @relation("match_winningTeamToTeam")
-  users                   User[]
-}
-
-model Equation {
-  id              String          @id @default(uuid()) @db.Uuid
-  name            String          @db.VarChar(255)
-  userId          String?         @db.Uuid
-  teamID          String?         @db.Uuid
-  createdByUser   User?           @relation(fields: [userId], references: [id])
-  Team            Team?           @relation(fields: [teamID], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_equation_team_id")
-  matchesAsTeam1  EquationMatch[] @relation("equation_match_team1EquationToEquation")
-  matchesAsTeam2  EquationMatch[] @relation("equation_match_team2EquationToEquation")
-  matchesWithLoss EquationMatch[] @relation("equation_match_losingEquationToEquation")
-  matchesWithWin  EquationMatch[] @relation("equation_match_winningEquationToEquation")
-}
-
-model token {
-  id        String   @id @db.Uuid
-  createdAt DateTime @default(now()) @db.Timestamp(6)
-  name      String   @unique
-}
-
 model Account {
+  id                String  @id @default(uuid())
+  userId            String  @db.Uuid
   type              String
   provider          String
   providerAccountId String
@@ -126,34 +21,93 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
-  id                String  @id @default(uuid()) @db.Uuid
-  userId            String  @db.Uuid
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
 
+model ApiToken {
+  id         String    @id @db.Uuid
+  created_at DateTime  @default(now()) @db.Timestamp(6)
+  name       String    @unique
+  access     ApiAccess
+  token      String    @unique
+}
+
+model Equation {
+  id                  String                @id @default(uuid()) @db.Uuid
+  name                String                @db.VarChar(255)
+  user_id             String?               @db.Uuid
+  team_id             String?               @db.Uuid
+  content             Json                  @default("null") @db.Json
+  elo_contribute      Int                   @default(0)
+  Team                Team?                 @relation(fields: [team_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  User                User?                 @relation(fields: [user_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  TeamInEquationMatch TeamInEquationMatch[]
+}
+
+model Job {
+  id        String            @id @db.Uuid
+  createdAt DateTime          @default(now()) @db.Timestamp(6)
+  team_id   String            @db.Uuid
+  payload   String
+  status    enums_jobs_status
+  error     String?
+  Team      Team              @relation(fields: [team_id], references: [id], onUpdate: Restrict, map: "fk_user_team_id")
+}
+
 model Session {
-  sessionToken String   @unique
   expires      DateTime
+  sessionToken String   @unique
   id           String   @id @default(uuid()) @db.Uuid
   userId       String   @db.Uuid
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+model EquationMatch {
+  id                  String                @id @default(uuid()) @db.Uuid
+  type                String                @default("Casual")
+  timestamp           DateTime?             @db.Timestamp(6)
+  TeamInEquationMatch TeamInEquationMatch[]
+}
+
+model Team {
+  id                  String                @id @default(uuid()) @db.Uuid
+  name                String                @unique @db.VarChar(255)
+  eq_elo              Int                   @default(1000)
+  trained_elo         Int                   @default(1000)
+  Equation            Equation[]
+  Job                 Job[]
+  TeamInEquationMatch TeamInEquationMatch[]
+  User                User[]
+}
+
+model TeamInEquationMatch {
+  equationMatchId String        @db.Uuid
+  teamId          String        @db.Uuid
+  score           Int?          @default(0)
+  equationID      String        @db.Uuid
+  winner          Boolean?      @default(false)
+  Equation        Equation      @relation(fields: [equationID], references: [id])
+  EquationMatch   EquationMatch @relation(fields: [equationMatchId], references: [id])
+  Team            Team          @relation(fields: [teamId], references: [id])
+
+  @@id([equationMatchId, teamId])
+}
+
 model User {
   id            String     @id @default(uuid()) @db.Uuid
   name          String     @unique @db.VarChar(255)
-  discord_id    String?    @unique @db.VarChar(255)
   epic_id       String?    @unique @db.VarChar(255)
   email         String?    @unique
-  emailVerified DateTime?
   image         String?
   team_id       String?    @db.Uuid
+  emailVerified DateTime?
+  discord_id    String     @default(dbgenerated("('@'::text || (name)::text)")) @db.VarChar(255)
   accounts      Account[]
-  equations     Equation[]
+  Equation      Equation[]
   sessions      Session[]
-  team          Team?      @relation(fields: [team_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_user_team_id")
+  Team          Team?      @relation(fields: [team_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
 }
 
 model VerificationToken {
@@ -162,6 +116,22 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+view TeamView {
+  team_id         String  @id @db.Uuid
+  name            String? @db.VarChar(255)
+  eq_elo          Int?
+  trained_elo     Int?
+  eqmatcheswon    BigInt? @default(0)
+  eqmatcheslost   BigInt? @default(0)
+  eqmatchesplayed BigInt?
+}
+
+enum ApiAccess {
+  READONLY
+  READWRITE
+  READWRITEDELETE
 }
 
 enum enums_jobs_status {

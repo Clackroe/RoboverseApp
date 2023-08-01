@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { useRouter } from "next/router";
 import { api } from "~/utils/api";
@@ -13,15 +14,25 @@ export default function Profile() {
   if (!userName || Array.isArray(userName)) {
     userName = "GhostUser";
   }
-  const { data, isLoading, isError } = api.users.getUserByName.useQuery({
-    name: userName,
-  });
 
-  if (isLoading) {
-    return <div>Loading...</div>;
+  const user = api.users.getUserByName.useQuery({ name: userName });
+
+  if (!user.data) {
+    return (
+      <>
+        <div className="flex items-center justify-center">
+          <Image
+            alt="Loading"
+            src={"/spinner.svg"}
+            width={200}
+            height={200}
+          ></Image>
+        </div>
+      </>
+    );
   }
 
-  if (isError || !data) {
+  if (!user) {
     return <div>Error: User not found.</div>;
   }
 
@@ -32,24 +43,30 @@ export default function Profile() {
           <div className="mb-4">
             <Image
               className="rounded-full border-2 border-gray-300"
-              alt={data.name + "'s Profile Picture"}
+              alt={user.data.name + "'s Profile Picture"}
               width={300}
               height={300}
               quality={100}
-              src={data.image ? data.image : "/spinner.svg"}
+              src={
+                user
+                  ? user.data.image
+                    ? user.data.image
+                    : "/GhostUser.png"
+                  : "/Spinner.svg"
+              }
             />
           </div>
           <h1 className="text-3xl font-bold">
-            {data.name} ·{" "}
+            {user.data.name} ·{" "}
             <Link
               className="hover:underline"
-              href={"/teams/" + data.team?.name}
+              href={"/teams/" + user.data.Team?.name}
             >
-              {data.team ? data.team.name : "No Team Found"}
+              {user.data.Team ? user.data.Team.name : "No Team Found"}
             </Link>
           </h1>
 
-          {sessionData?.user.id === data.id ? (
+          {sessionData?.user.id === user.data.id ? (
             <button
               className="rounded-md px-1 text-slate-500 hover:text-red-800 hover:underline"
               onClick={() => void signOut()}
