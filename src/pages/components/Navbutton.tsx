@@ -4,9 +4,9 @@ export default function Navbutton(props: { selected: boolean; page: string }) {
   return (
     <>
       <Link
-        className={`rounded-full ${
+        className={` ${
           props.selected
-            ? "bg-green-500 text-black"
+            ? "border-b-2 border-green-500 text-slate-300"
             : "bg-transparent text-slate-300"
         } px-5 py-1 font-poppins text-4xl text-black`}
         href={"/" + props.page.toLowerCase()}

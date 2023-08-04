@@ -23,15 +23,15 @@ export default function UserListTeam(props: { teamID: string }) {
     );
   } else {
     return (
-      <div className="w-full">
-        <table className="w-full text-2xl">
-          <thead className="sticky top-0 bg-green-500 text-black">
+      <div className="max-h-72 w-full overflow-auto">
+        <table className="w-full text-xl ">
+          <thead className="sticky top-0 border-b-2 bg-black text-slate-400">
             <tr>
-              <th className="px-4 py-2">Name</th>
-              <th className="px-4 py-2">Created Equations</th>
+              <th className="px-2 ">Players</th>
+              <th className="px-2 ">Created Equations</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="">
             {users.data?.map((user) => {
               if (!user) {
                 return null;

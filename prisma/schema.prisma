@@ -9,7 +9,7 @@ datasource db {
 }
 
 model Account {
-  id                String  @id @default(uuid())
+  id                String  @id @default(dbgenerated("gen_random_uuid()"))
   userId            String  @db.Uuid
   type              String
   provider          String
@@ -27,7 +27,7 @@ model Account {
 }
 
 model ApiToken {
-  id         String    @id @db.Uuid
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   created_at DateTime  @default(now()) @db.Timestamp(6)
   name       String    @unique
   access     ApiAccess
@@ -35,19 +35,26 @@ model ApiToken {
 }
 
 model Equation {
-  id                  String                @id @default(uuid()) @db.Uuid
+  id                  String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name                String                @db.VarChar(255)
   user_id             String?               @db.Uuid
   team_id             String?               @db.Uuid
-  content             Json                  @default("null") @db.Json
   elo_contribute      Int                   @default(0)
+  content             Json                  @default("null") @db.Json
   Team                Team?                 @relation(fields: [team_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
   User                User?                 @relation(fields: [user_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
   TeamInEquationMatch TeamInEquationMatch[]
 }
 
+model EquationMatch {
+  id                  String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  type                String                @default("Casual")
+  timestamp           DateTime?             @db.Timestamp(6)
+  TeamInEquationMatch TeamInEquationMatch[]
+}
+
 model Job {
-  id        String            @id @db.Uuid
+  id        String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   createdAt DateTime          @default(now()) @db.Timestamp(6)
   team_id   String            @db.Uuid
   payload   String
@@ -59,27 +66,35 @@ model Job {
 model Session {
   expires      DateTime
   sessionToken String   @unique
-  id           String   @id @default(uuid()) @db.Uuid
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   userId       String   @db.Uuid
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model EquationMatch {
-  id                  String                @id @default(uuid()) @db.Uuid
-  type                String                @default("Casual")
-  timestamp           DateTime?             @db.Timestamp(6)
-  TeamInEquationMatch TeamInEquationMatch[]
-}
-
 model Team {
-  id                  String                @id @default(uuid()) @db.Uuid
+  id                  String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name                String                @unique @db.VarChar(255)
   eq_elo              Int                   @default(1000)
   trained_elo         Int                   @default(1000)
+  totalEqMatches      Int                   @default(0)
+  totalEqMatchesWon   Int                   @default(0)
+  totalEqMatchesLost  Int                   @default(0)
+  mu                  Decimal?              @default(25) @db.Decimal
+  sigma               Decimal?              @default(8.3333333333) @db.Decimal
+  ranking             Decimal?              @db.Decimal
   Equation            Equation[]
   Job                 Job[]
+  TeamEqEloHistory    TeamEqEloHistory[]
   TeamInEquationMatch TeamInEquationMatch[]
   User                User[]
+}
+
+model TeamEqEloHistory {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  teamId    String   @db.Uuid
+  elo       Int
+  timestamp DateTime @db.Timestamp(6)
+  Team      Team     @relation(fields: [teamId], references: [id], onUpdate: Restrict)
 }
 
 model TeamInEquationMatch {
@@ -88,15 +103,18 @@ model TeamInEquationMatch {
   score           Int?          @default(0)
   equationID      String        @db.Uuid
   winner          Boolean?      @default(false)
+  id              String        @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  mu_after        Decimal?      @db.Decimal
+  sigma_after     Decimal?      @db.Decimal
+  mu_before       Decimal?      @db.Decimal
+  sigma_before    Decimal?      @db.Decimal
   Equation        Equation      @relation(fields: [equationID], references: [id])
   EquationMatch   EquationMatch @relation(fields: [equationMatchId], references: [id])
   Team            Team          @relation(fields: [teamId], references: [id])
-
-  @@id([equationMatchId, teamId])
 }
 
 model User {
-  id            String     @id @default(uuid()) @db.Uuid
+  id            String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name          String     @unique @db.VarChar(255)
   epic_id       String?    @unique @db.VarChar(255)
   email         String?    @unique
@@ -104,9 +122,9 @@ model User {
   team_id       String?    @db.Uuid
   emailVerified DateTime?
   discord_id    String     @default(dbgenerated("('@'::text || (name)::text)")) @db.VarChar(255)
-  accounts      Account[]
+  Account       Account[]
   Equation      Equation[]
-  sessions      Session[]
+  Session       Session[]
   Team          Team?      @relation(fields: [team_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
 }
 
@@ -118,14 +136,17 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 view TeamView {
-  team_id         String  @id @db.Uuid
+  team_id         String? @db.Uuid
   name            String? @db.VarChar(255)
   eq_elo          Int?
   trained_elo     Int?
-  eqmatcheswon    BigInt? @default(0)
-  eqmatcheslost   BigInt? @default(0)
+  eqmatcheswon    BigInt?
+  eqmatcheslost   BigInt?
   eqmatchesplayed BigInt?
+
+  @@ignore
 }
 
 enum ApiAccess {

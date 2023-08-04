@@ -19,16 +19,19 @@ export default Layout;
 function Authenticate() {
   return (
     <>
-      <div className="flex flex-col items-center gap-2">
+      <div className="no-scrollbar mt-[10%] flex flex-col items-center justify-center gap-2 overflow-clip">
         <Image
+          className=""
+          width={500}
+          // layout="responsive"
+          unoptimized={true}
+          height={500}
+          src={"/Roboverse_Animation.gif"}
           alt="VESL Logo"
-          src={"/logos/VESLLogoGreen.png"}
-          width={700}
-          height={700}
         ></Image>
 
         <button
-          className="rounded-full bg-green-500 px-4 py-2 font-poppins text-4xl text-black"
+          className="rounded-full bg-green-500 px-4 py-1 font-poppins text-4xl text-black"
           onClick={() => void signIn()}
         >
           Sign In
