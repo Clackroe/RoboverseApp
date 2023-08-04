@@ -2,15 +2,23 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import React, { useState } from "react";
 import { Unity, useUnityContext } from "react-unity-webgl";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
+import { api } from "~/utils/api";
 
 export default function UnityPlayer() {
-  const { unityProvider, isLoaded, requestFullscreen } = useUnityContext({
-    loaderUrl: "/Builds/Build/Builds.loader.js",
-    dataUrl: "/Builds/Build/Builds.data.unityweb",
-    frameworkUrl: "/Builds/Build/Builds.framework.js.unityweb",
-    codeUrl: "/Builds/Build/Builds.wasm.unityweb",
-  });
+  const { data: sessionData } = useSession();
+
+  const userID = sessionData ? sessionData.user.id : "0";
+  const user = api.users.getUserById.useQuery({ id: userID });
+
+  const { unityProvider, isLoaded, requestFullscreen, sendMessage } =
+    useUnityContext({
+      loaderUrl: "/Builds/Build/Build 2.loader.js",
+      dataUrl: "/Builds/Build/Build 2.data.unityweb",
+      frameworkUrl: "/Builds/Build/Build 2.framework.js.unityweb",
+      codeUrl: "/Builds/Build/Build 2.wasm.unityweb",
+    });
 
   function handleClickEnterFullscreen() {
     requestFullscreen(true);
@@ -34,26 +42,33 @@ export default function UnityPlayer() {
 
   React.useEffect(
     function () {
-      // A function which will update the device pixel ratio of the Unity
-      // Application to match the device pixel ratio of the browser.
+      // update the device pixel ratio of the Unity Application to match the device pixel ratio of the browser.
       const updateDevicePixelRatio = function () {
         setDevicePixelRatio(window.devicePixelRatio);
       };
-      // A media matcher which watches for changes in the device pixel ratio.
       const mediaMatcher = window.matchMedia(
         `screen and (resolution: ${devicePixelRatio}dppx)`
       );
-      // Adding an event listener to the media matcher which will update the
-      // device pixel ratio of the Unity Application when the device pixel
-      // ratio changes.
       mediaMatcher.addEventListener("change", updateDevicePixelRatio);
       return function () {
-        // Removing the event listener when the component unmounts.
         mediaMatcher.removeEventListener("change", updateDevicePixelRatio);
       };
     },
     [devicePixelRatio]
   );
+
+  React.useEffect(() => {
+    if (isLoaded) {
+      handleSendId();
+    }
+  });
+  function handleSendId() {
+    sendMessage(
+      "UserManager",
+      "getUserIdFromReact",
+      `Welcome ${user.data ? user.data.name : "NoData"}...`
+    );
+  }
 
   return (
     <>

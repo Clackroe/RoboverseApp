@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { v4 as uuidv4 } from "uuid";
 
 const prisma = new PrismaClient();
 
@@ -7,7 +8,7 @@ async function main() {
     // Seed users
     const users = await Promise.all(
       Array.from({ length: 10 }).map(async (_, index) => {
-        const name = `User ${index + 1}`;
+        const name = `User2-${index + 1}`;
         const email = `user${index + 1}@example.com`;
         const image = `https://example.com/user${index + 1}.jpg`;
 
@@ -30,7 +31,7 @@ async function main() {
     // Seed teams
     const teams = await Promise.all(
       Array.from({ length: 5 }).map(async (_, index) => {
-        const name = `Team ${index + 1}`;
+        const name = `TeamNew-${index + 1}`;
         const eq_elo = 1000;
         const trained_elo = 1000;
 
@@ -109,6 +110,8 @@ async function main() {
 
         return prisma.equationMatch.create({
           data: {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+            id: uuidv4(),
             type,
             timestamp,
             TeamInEquationMatch: {

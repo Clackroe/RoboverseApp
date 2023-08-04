@@ -4,17 +4,24 @@ import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 export const teamsRouter = createTRPCRouter({
   getAllTeams: publicProcedure.query(async ({ ctx }) => {
     return await ctx.prisma.team.findMany({
-      include: {},
+      orderBy: { eq_elo: "desc" },
     });
   }),
 
-  getAllTeamViews: publicProcedure.query(async ({ ctx }) => {
-    return await ctx.prisma.teamView.findMany({
-      orderBy: {
-        eq_elo: "desc",
-      },
+  getTop3Teams: publicProcedure.query(async ({ ctx }) => {
+    return await ctx.prisma.team.findMany({
+      orderBy: { eq_elo: "desc" },
+      take: 3,
     });
   }),
+
+  // getAllTeamViews: publicProcedure.query(async ({ ctx }) => {
+  //   return await ctx.prisma.teamView.findMany({
+  //     orderBy: {
+  //       eq_elo: "desc",
+  //     },
+  //   });
+  // }),
   getTeamById: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
@@ -27,7 +34,10 @@ export const teamsRouter = createTRPCRouter({
             id: input.id,
           },
           include: {
-            Equation: { include: { User: true, TeamInEquationMatch: true } },
+            Equation: {
+              include: { User: true, TeamInEquationMatch: true },
+              orderBy: { elo_contribute: "desc" },
+            },
             User: true,
           },
         })

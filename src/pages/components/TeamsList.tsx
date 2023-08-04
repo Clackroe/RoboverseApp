@@ -1,11 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { api } from "~/utils/api";
 import Image from "next/image";
 import Link from "next/link";
-import { type Team } from "@prisma/client";
 
 export default function TeamsList() {
-  const teams = api.teams.getAllTeamViews.useQuery();
+  const teams = api.teams.getAllTeams.useQuery();
 
   if (!teams.data) {
     return (
@@ -39,12 +37,12 @@ export default function TeamsList() {
               if (!team) {
                 return null;
               }
-              const totalWins = team.eqmatcheswon;
-              const totalLosses = team.eqmatcheslost;
-              const totalMatches = team.eqmatchesplayed;
+              const totalWins = team.totalEqMatchesWon;
+              const totalLosses = team.totalEqMatchesLost;
+              const totalMatches = team.totalEqMatches;
 
               return (
-                <tr className="" key={team.team_id}>
+                <tr className="" key={team.id}>
                   <td className="px-4 py-2 text-center hover:underline">
                     <Link href={"/teams/" + team.name}>{team.name}</Link>
                   </td>
