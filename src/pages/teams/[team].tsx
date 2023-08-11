@@ -6,6 +6,7 @@ import Image from "next/image";
 
 import UserListTeam from "../components/UserListTeam";
 import EqMatchListTeam from "../components/EqMatchListTeam";
+import TeamHistory from "../components/TeamHistory";
 
 export default function TeamPage() {
   const router = useRouter();
@@ -34,8 +35,9 @@ export default function TeamPage() {
         <div className="mt-5 flex border-b-2">
           <div className="ml-28 flex">
             <Image
+              className="object-contain"
               alt={team.data.name + "'s Profile Picture"}
-              src={"/RockyRiver.png"}
+              src={team.data?.logo ?? "/spinner.svg"}
               width={300}
               height={300}
               quality={100}
@@ -43,14 +45,20 @@ export default function TeamPage() {
             <div className="ml-8 mt-16 flex flex-col font-poppins text-3xl text-slate-200">
               <div>{team.data.name}</div>
               <div className="text-lg italic text-slate-400">
-                Ranking: ----{}
+                Rating:{" "}
+                {typeof parseFloat(String(team.data?.ranking)) === "number"
+                  ? (parseFloat(String(team.data?.ranking)) * 1000).toFixed(0)
+                  : "Unranked"}
               </div>
               <div className="text-lg italic text-slate-400">
-                Elo: {team.data.eq_elo}
+                W/L: {team.data?.totalEqMatches} /{" "}
+                {team.data?.totalEqMatchesLost}
               </div>
             </div>
           </div>
-          <div className="grow"></div>
+          <div className="flex grow items-center justify-center pb-20 pr-96 ">
+            <TeamHistory id={team.data.id} />
+          </div>
           <div className="mr-36">
             <UserListTeam teamID={team.data.id} />
           </div>

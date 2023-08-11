@@ -3,6 +3,7 @@ import { createTRPCRouter } from "~/server/api/trpc";
 import { usersRouter } from "./routers/users";
 import { teamsRouter } from "./routers/teams";
 import { eqmatchesRouter } from "./routers/eqmatches";
+import { bucketRouter } from "./routers/bucket";
 /**
  * This is the primary router for your server.
  *
@@ -13,6 +14,7 @@ export const appRouter = createTRPCRouter({
   users: usersRouter,
   teams: teamsRouter,
   eqMatches: eqmatchesRouter,
+  bucket: bucketRouter,
 });
 
 // export type definition of API

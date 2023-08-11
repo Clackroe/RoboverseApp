@@ -11,7 +11,7 @@ export default function ProfilePicture(props: {
   return (
     <>
       {sessionData.data ? (
-        <div className="flex items-center justify-center  ">
+        <div className="flex items-center justify-center rounded-full border-2 border-black hover:border-green-500  ">
           <div className="flex-shrink-0">
             <Link
               href={

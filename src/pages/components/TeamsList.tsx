@@ -3,6 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function TeamsList() {
+  const user = api.users.getLoggedInUser.useQuery();
+
   const teams = api.teams.getAllTeams.useQuery();
 
   if (!teams.data) {
@@ -21,7 +23,7 @@ export default function TeamsList() {
     );
   } else {
     return (
-      <div className="w-full">
+      <div className={`w-full `}>
         <table className="w-full text-2xl">
           <thead className="sticky top-0 bg-green-500 text-black">
             <tr>
@@ -29,7 +31,7 @@ export default function TeamsList() {
               <th className="px-4 py-2">Total Matches</th>
               <th className="px-4 py-2">Total Wins</th>
               <th className="px-4 py-2">Total Losses</th>
-              <th className="px-4 py-2">Score</th>
+              <th className="px-4 py-2">Rating</th>
             </tr>
           </thead>
           <tbody>
@@ -37,13 +39,33 @@ export default function TeamsList() {
               if (!team) {
                 return null;
               }
+              const isUserTeam = user.data?.Team?.id === team.id;
               const totalWins = team.totalEqMatchesWon;
               const totalLosses = team.totalEqMatchesLost;
               const totalMatches = team.totalEqMatches;
 
               return (
-                <tr className="" key={team.id}>
+                <tr
+                  className={`${
+                    isUserTeam
+                      ? " rounded-md border-2 border-green-500 bg-green-500 bg-opacity-30"
+                      : ""
+                  }`}
+                  key={team.id}
+                >
                   <td className="px-4 py-2 text-center hover:underline">
+                    {isUserTeam ? (
+                      <div className="absolute left-28 flex flex-col items-center justify-center  align-middle">
+                        <Image
+                          className="mb-2"
+                          alt="Home"
+                          width={35}
+                          height={35}
+                          src={"/home.svg"}
+                        ></Image>
+                      </div>
+                    ) : null}
+
                     <Link href={"/teams/" + team.name}>{team.name}</Link>
                   </td>
                   <td className="px-4 py-2 text-center">
@@ -55,7 +77,11 @@ export default function TeamsList() {
                   <td className="px-4 py-2 text-center">
                     {totalLosses ? totalLosses.toString() : "0"}
                   </td>
-                  <td className="px-4 py-2 text-center">{team.eq_elo}</td>
+                  <td className="px-4 py-2 text-center">
+                    {typeof parseFloat(String(team.ranking)) === "number"
+                      ? (parseFloat(String(team.ranking)) * 1000).toFixed(0)
+                      : "Unranked"}
+                  </td>
                 </tr>
               );
             })}
