@@ -1,6 +1,7 @@
 import { api } from "~/utils/api";
 import TeamsList from "../components/TeamsList";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function TeamsPage() {
   const teams = api.teams.getTop3Teams.useQuery();
@@ -33,7 +34,7 @@ export default function TeamsPage() {
           }
           return (
             <div
-              className={`mb-3 ml-28 px-2 ${container} flex flex-col`}
+              className={`mb-3 ml-28 px-2 ${container} flex h-80 w-64 flex-col`}
               key={team.id}
             >
               <div className="flex items-center justify-center">
@@ -43,18 +44,28 @@ export default function TeamsPage() {
                   {placement}
                 </div>
               </div>
-              <Image
-                alt={team.name + "'s Profile Picture"}
-                src={"/RockyRiver.png"}
-                width={250}
-                height={250}
-                quality={100}
-              ></Image>
+              <div className="flex items-center justify-center align-middle">
+                <Image
+                  className="max-h-48 min-h-[192px] object-contain"
+                  alt={team.name + "'s Profile Picture"}
+                  src={team.logo || "/spinner.svg"}
+                  objectFit="contain"
+                  // sizes={"max-height: 20px"}
+                  width={200}
+                  height={100}
+                  quality={100}
+                ></Image>
+              </div>
               <div className="flex items-center justify-center">
                 <div className="flex flex-col font-poppins text-3xl text-slate-200">
-                  <div>{team.name}</div>
+                  <div className="break-before-auto hover:underline">
+                    <Link href={`/teams/${team.name}`}>{team.name}</Link>
+                  </div>
                   <div className="text-lg italic text-slate-400">
-                    Elo: {team.eq_elo}
+                    Rating:{" "}
+                    {typeof parseFloat(String(team.ranking)) === "number"
+                      ? (parseFloat(String(team.ranking)) * 1000).toFixed(0)
+                      : "Unranked"}
                   </div>
                 </div>
               </div>

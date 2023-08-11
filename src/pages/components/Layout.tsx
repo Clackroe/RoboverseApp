@@ -8,8 +8,10 @@ const Layout = ({ children }: { children: ReactNode }) => {
 
   return (
     <>
-      {sessionData ? <Navbar /> : <Authenticate />}
-      {sessionData ? children : null}
+      <div className="overflow-x-hidden overscroll-x-none">
+        {sessionData ? <Navbar /> : <Authenticate />}
+        {sessionData ? children : null}
+      </div>
     </>
   );
 };
@@ -19,7 +21,7 @@ export default Layout;
 function Authenticate() {
   return (
     <>
-      <div className="no-scrollbar mt-[10%] flex flex-col items-center justify-center gap-2 overflow-clip">
+      <div className="no-scrollbar mt-[10%] flex flex-col items-center justify-center gap-2 overflow-clip  overscroll-y-none overscroll-x-none">
         <Image
           className=""
           width={500}

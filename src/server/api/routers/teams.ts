@@ -1,16 +1,27 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+// import { ordinal, rate } from "openskill";
 
 export const teamsRouter = createTRPCRouter({
   getAllTeams: publicProcedure.query(async ({ ctx }) => {
     return await ctx.prisma.team.findMany({
-      orderBy: { eq_elo: "desc" },
+      where: {
+        ranking: {
+          not: null,
+        },
+      },
+      orderBy: { ranking: "desc" },
     });
   }),
 
   getTop3Teams: publicProcedure.query(async ({ ctx }) => {
     return await ctx.prisma.team.findMany({
-      orderBy: { eq_elo: "desc" },
+      where: {
+        ranking: {
+          not: null,
+        },
+      },
+      orderBy: { ranking: "desc" },
       take: 3,
     });
   }),
@@ -67,5 +78,35 @@ export const teamsRouter = createTRPCRouter({
           return null;
         });
       return team;
+    }),
+
+  getTeamRankHistory: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const matches = await ctx.prisma.teamInEquationMatch
+        .findMany({
+          where: {
+            teamId: input.id,
+          },
+          take: 10,
+          include: {
+            EquationMatch: true,
+          },
+          orderBy: { EquationMatch: { ended: "desc" } },
+        })
+        .catch(() => {
+          return null;
+        });
+
+      // console.log(""matches);
+      const ret = matches?.map((match) => {
+        // console.log(match);
+        return {
+          id: match.id,
+          ranking: match.ranking_after,
+          date: match.EquationMatch.ended,
+        };
+      });
+      return ret?.slice(0).reverse();
     }),
 });
