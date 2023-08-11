@@ -51,7 +51,7 @@ export default function TeamPage() {
                   : "Unranked"}
               </div>
               <div className="text-lg italic text-slate-400">
-                W/L: {team.data?.totalEqMatches} /{" "}
+                W/L: {team.data?.totalEqMatchesWon} /{" "}
                 {team.data?.totalEqMatchesLost}
               </div>
             </div>
