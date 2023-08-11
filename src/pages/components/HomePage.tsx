@@ -14,13 +14,13 @@ export default function HomePage() {
   return (
     <div className="flex h-auto w-auto items-center justify-center align-middle">
       <div className="flex flex-col items-center justify-center align-middle">
-        <button
+        {/* <button
           onClick={() =>
             handleUpload("DefaultPFP4.png", "./public/DefaultPFP4.png")
           }
         >
           Upload
-        </button>
+        </button> */}
       </div>
     </div>
   );
