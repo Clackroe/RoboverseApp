@@ -1,11 +1,12 @@
 import { api } from "~/utils/api";
 import Image from "next/image";
 import Link from "next/link";
+import { Team } from "@prisma/client";
 
 export default function TeamsList() {
   const user = api.users.getLoggedInUser.useQuery();
 
-  const teams = api.teams.getAllTeams.useQuery();
+  const teams = api.teams.getAllTeamsWithGlobalRank.useQuery();
 
   if (!teams.data) {
     return (
@@ -31,11 +32,11 @@ export default function TeamsList() {
               <th className="px-4 py-2">Total Matches</th>
               <th className="px-4 py-2">Total Wins</th>
               <th className="px-4 py-2">Total Losses</th>
-              <th className="px-4 py-2">Rating</th>
+              <th className="px-4 py-2">Global Rating</th>
             </tr>
           </thead>
           <tbody>
-            {teams.data.map((team) => {
+            {teams.data.map((team: Team) => {
               if (!team) {
                 return null;
               }
@@ -78,8 +79,10 @@ export default function TeamsList() {
                     {totalLosses ? totalLosses.toString() : "0"}
                   </td>
                   <td className="px-4 py-2 text-center">
-                    {typeof parseFloat(String(team.ranking)) === "number"
-                      ? (parseFloat(String(team.ranking)) * 1000).toFixed(0)
+                    {typeof parseFloat(String(team.global_ranking)) === "number"
+                      ? (
+                          parseFloat(String(team.global_ranking)) * 1000
+                        ).toFixed(0)
                       : "Unranked"}
                   </td>
                 </tr>

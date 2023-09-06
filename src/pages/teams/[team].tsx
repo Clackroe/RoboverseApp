@@ -45,9 +45,21 @@ export default function TeamPage() {
             <div className="ml-8 mt-16 flex flex-col font-poppins text-3xl text-slate-200">
               <div>{team.data.name}</div>
               <div className="text-lg italic text-slate-400">
-                Rating:{" "}
-                {typeof parseFloat(String(team.data?.ranking)) === "number"
-                  ? (parseFloat(String(team.data?.ranking)) * 1000).toFixed(0)
+                Global Rating:{" "}
+                {typeof parseFloat(String(team.data?.global_ranking)) ===
+                "number"
+                  ? (
+                      parseFloat(String(team.data?.global_ranking)) * 1000
+                    ).toFixed(0)
+                  : "Unranked"}
+              </div>
+              <div className="text-lg italic text-slate-400">
+                District Rating:{" "}
+                {typeof parseFloat(String(team.data?.district_ranking)) ===
+                "number"
+                  ? (
+                      parseFloat(String(team.data?.district_ranking)) * 1000
+                    ).toFixed(0)
                   : "Unranked"}
               </div>
               <div className="text-lg italic text-slate-400">

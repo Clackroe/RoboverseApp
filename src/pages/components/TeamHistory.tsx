@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Line } from "react-chartjs-2";
 import Image from "next/image";
 
@@ -97,7 +96,9 @@ export default function TeamHistory(props: {
     height = props.h;
   }
 
-  const teamHistory = api.teams.getTeamRankHistory.useQuery({ id: props.id });
+  const teamHistory = api.teams.getTeamGlobalRankHistory.useQuery({
+    id: props.id,
+  });
 
   if (teamHistory.data) {
     const dataset = {

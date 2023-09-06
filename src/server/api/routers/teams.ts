@@ -3,36 +3,29 @@ import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 // import { ordinal, rate } from "openskill";
 
 export const teamsRouter = createTRPCRouter({
-  getAllTeams: publicProcedure.query(async ({ ctx }) => {
+  getAllTeamsWithGlobalRank: publicProcedure.query(async ({ ctx }) => {
     return await ctx.prisma.team.findMany({
       where: {
-        ranking: {
+        global_ranking: {
           not: null,
         },
       },
-      orderBy: { ranking: "desc" },
+      orderBy: { global_ranking: "desc" },
     });
   }),
 
-  getTop3Teams: publicProcedure.query(async ({ ctx }) => {
+  getTop3TeamsGlobal: publicProcedure.query(async ({ ctx }) => {
     return await ctx.prisma.team.findMany({
       where: {
-        ranking: {
+        global_ranking: {
           not: null,
         },
       },
-      orderBy: { ranking: "desc" },
+      orderBy: { global_ranking: "desc" },
       take: 3,
     });
   }),
 
-  // getAllTeamViews: publicProcedure.query(async ({ ctx }) => {
-  //   return await ctx.prisma.teamView.findMany({
-  //     orderBy: {
-  //       eq_elo: "desc",
-  //     },
-  //   });
-  // }),
   getTeamById: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
@@ -80,7 +73,7 @@ export const teamsRouter = createTRPCRouter({
       return team;
     }),
 
-  getTeamRankHistory: publicProcedure
+  getTeamGlobalRankHistory: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
       const matches = await ctx.prisma.teamInEquationMatch
@@ -103,7 +96,7 @@ export const teamsRouter = createTRPCRouter({
         // console.log(match);
         return {
           id: match.id,
-          ranking: match.ranking_after,
+          ranking: match.global_ranking_after,
           date: match.EquationMatch.ended,
         };
       });
