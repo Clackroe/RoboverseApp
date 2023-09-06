@@ -12,10 +12,10 @@ export default function UnityPlayer() {
 
   const { unityProvider, isLoaded, requestFullscreen, sendMessage } =
     useUnityContext({
-      loaderUrl: "/Builds/Build/Build 17.loader.js",
-      dataUrl: "/Builds/Build/Build 17.data.unityweb",
-      frameworkUrl: "/Builds/Build/Build 17.framework.js.unityweb",
-      codeUrl: "/Builds/Build/Build 17.wasm.unityweb",
+      loaderUrl: "/Builds/Build/Build 18.loader.js",
+      dataUrl: "/Builds/Build/Build 18.data.unityweb",
+      frameworkUrl: "/Builds/Build/Build 18.framework.js.unityweb",
+      codeUrl: "/Builds/Build/Build 18.wasm.unityweb",
     });
 
   function handleClickEnterFullscreen() {
@@ -62,9 +62,9 @@ export default function UnityPlayer() {
   });
   function handleSendId() {
     sendMessage(
-      "UserManager",
+      "UMRefrenceHolder",
       "getUserIdFromReact",
-      `Welcome ${user.data ? user.data.name : "NoData"}...`
+      `${user.data ? user.data.id : "NoData"}`
     );
   }
 
