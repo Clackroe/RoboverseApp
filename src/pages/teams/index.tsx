@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function TeamsPage() {
-  const teams = api.teams.getTop3Teams.useQuery();
+  const teams = api.teams.getTop3TeamsGlobal.useQuery();
   return (
     <>
       <div className="flex items-center justify-center border-b-2">
@@ -63,8 +63,10 @@ export default function TeamsPage() {
                   </div>
                   <div className="text-lg italic text-slate-400">
                     Rating:{" "}
-                    {typeof parseFloat(String(team.ranking)) === "number"
-                      ? (parseFloat(String(team.ranking)) * 1000).toFixed(0)
+                    {typeof parseFloat(String(team.global_ranking)) === "number"
+                      ? (
+                          parseFloat(String(team.global_ranking)) * 1000
+                        ).toFixed(0)
                       : "Unranked"}
                   </div>
                 </div>

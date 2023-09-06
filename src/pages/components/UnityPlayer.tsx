@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import React, { useState } from "react";
 import { Unity, useUnityContext } from "react-unity-webgl";
 import { useSession } from "next-auth/react";
@@ -14,10 +12,10 @@ export default function UnityPlayer() {
 
   const { unityProvider, isLoaded, requestFullscreen, sendMessage } =
     useUnityContext({
-      loaderUrl: "/Builds/Build/Build 16.loader.js",
-      dataUrl: "/Builds/Build/Build 16.data.unityweb",
-      frameworkUrl: "/Builds/Build/Build 16.framework.js.unityweb",
-      codeUrl: "/Builds/Build/Build 16.wasm.unityweb",
+      loaderUrl: "/Builds/Build/Build 17.loader.js",
+      dataUrl: "/Builds/Build/Build 17.data.unityweb",
+      frameworkUrl: "/Builds/Build/Build 17.framework.js.unityweb",
+      codeUrl: "/Builds/Build/Build 17.wasm.unityweb",
     });
 
   function handleClickEnterFullscreen() {
