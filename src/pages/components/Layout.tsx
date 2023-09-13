@@ -14,8 +14,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
           className="vi hover:border-b-full md:mx-25 mx-[20%] max-h-10
         min-w-fit break-before-avoid-page rounded-b-full  bg-gradient-to-br 
         from-green-200 via-green-500 to-green-800 py-2 text-black 
-        hover:mx-[35%] sm:transition-none md:transition-none lg:transition-all "
-          min-width="25%"
+        sm:transition-none md:transition-none lg:transition-all lg:hover:mx-[35%] "
           style={{ animation: "none" }}
         >
           <div className="flex items-center justify-center ">
