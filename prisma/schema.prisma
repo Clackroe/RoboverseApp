@@ -7,6 +7,21 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Perms {
+  id              String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name            String  @default("Custom")
+  is_admin        Boolean @default(false) // if true, all other perms are ignored
+  admin_dash      Boolean @default(false)
+  create_team     Boolean @default(false)
+  edit_team       Boolean @default(false)
+  delete_team     Boolean @default(false)
+  create_user     Boolean @default(false)
+  delete_user     Boolean @default(false)
+  edit_user       Boolean @default(false)
+  delete_equation Boolean @default(false)
+  User            User[]
+}
+
 model Account {
   id                String  @id @default(dbgenerated("gen_random_uuid()"))
   userId            String  @db.Uuid
@@ -149,6 +164,8 @@ model User {
   Equation      Equation[]
   Session       Session[]
   Team          Team?      @relation(fields: [team_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  perm_id       String?    @db.Uuid
+  Perm          Perms?     @relation(fields: [perm_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
 }
 
 model VerificationToken {
