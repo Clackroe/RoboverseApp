@@ -10,7 +10,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
   return (
     <>
       <a href="https://app.vesl.gg/catalog">
-        <div className="vi hover:border-b-full mx-96 rounded-b-full bg-gradient-to-br from-green-200 via-green-500 to-green-800 py-2  text-black transition-all hover:mx-[750px] hover:underline">
+        <div className="vi hover:border-b-full mx-96 rounded-b-full bg-gradient-to-br from-green-200 via-green-500 to-green-800 py-2  text-black transition-all hover:mx-[750px] ">
           <div className="flex items-center justify-center ">
             <p className=" ">MORE IN THE VESLVERSE</p>
           </div>
