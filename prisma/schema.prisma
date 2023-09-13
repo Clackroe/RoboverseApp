@@ -157,7 +157,7 @@ model User {
   epic_id       String?    @unique @db.VarChar(255)
   email         String?    @unique
   image         String?
-  team_id       String?    @db.Uuid
+  team_id       String?    @default("e968e4fc-80e6-4868-8e83-d6451c2bfcaa") @db.Uuid
   emailVerified DateTime?
   discord_id    String     @default(dbgenerated("('@'::text || (name)::text)")) @db.VarChar(255)
   Account       Account[]
