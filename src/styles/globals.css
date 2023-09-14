@@ -7,3 +7,17 @@ body {
   /* @apply min-h-screen bg-gradient-to-b from-slate-800 to-slate-900 text-slate-300; */
   @apply min-h-screen bg-black text-slate-300;
 }
+html,
+body {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}

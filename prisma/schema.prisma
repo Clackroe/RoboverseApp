@@ -1,6 +1,5 @@
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["views"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -8,8 +7,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Perms {
+  id              String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name            String  @default("Custom")
+  is_admin        Boolean @default(false) // if true, all other perms are ignored
+  admin_dash      Boolean @default(false)
+  create_team     Boolean @default(false)
+  edit_team       Boolean @default(false)
+  delete_team     Boolean @default(false)
+  create_user     Boolean @default(false)
+  delete_user     Boolean @default(false)
+  edit_user       Boolean @default(false)
+  delete_equation Boolean @default(false)
+  User            User[]
+}
+
 model Account {
-  id                String  @id @default(uuid())
+  id                String  @id @default(dbgenerated("gen_random_uuid()"))
   userId            String  @db.Uuid
   type              String
   provider          String
@@ -27,27 +41,36 @@ model Account {
 }
 
 model ApiToken {
-  id         String    @id @db.Uuid
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   created_at DateTime  @default(now()) @db.Timestamp(6)
   name       String    @unique
   access     ApiAccess
-  token      String    @unique
 }
 
 model Equation {
-  id                  String                @id @default(uuid()) @db.Uuid
+  id                  String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name                String                @db.VarChar(255)
   user_id             String?               @db.Uuid
   team_id             String?               @db.Uuid
-  content             Json                  @default("null") @db.Json
   elo_contribute      Int                   @default(0)
+  content             Json                  @default("null") @db.Json
   Team                Team?                 @relation(fields: [team_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
   User                User?                 @relation(fields: [user_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
   TeamInEquationMatch TeamInEquationMatch[]
 }
 
+model EquationMatch {
+  id                  String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  type                String                @default("Casual")
+  ended               DateTime?             @db.Timestamp(6)
+  planned_start       DateTime?             @db.Timestamp(6)
+  started             DateTime?             @db.Timestamp(6)
+  status              MatchStatus           @default(PENDING)
+  TeamInEquationMatch TeamInEquationMatch[]
+}
+
 model Job {
-  id        String            @id @db.Uuid
+  id        String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   createdAt DateTime          @default(now()) @db.Timestamp(6)
   team_id   String            @db.Uuid
   payload   String
@@ -59,55 +82,90 @@ model Job {
 model Session {
   expires      DateTime
   sessionToken String   @unique
-  id           String   @id @default(uuid()) @db.Uuid
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   userId       String   @db.Uuid
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model EquationMatch {
-  id                  String                @id @default(uuid()) @db.Uuid
-  type                String                @default("Casual")
-  timestamp           DateTime?             @db.Timestamp(6)
-  TeamInEquationMatch TeamInEquationMatch[]
-}
-
 model Team {
-  id                  String                @id @default(uuid()) @db.Uuid
+  id                  String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name                String                @unique @db.VarChar(255)
-  eq_elo              Int                   @default(1000)
-  trained_elo         Int                   @default(1000)
+  totalEqMatches      Int                   @default(0)
+  totalEqMatchesWon   Int                   @default(0)
+  totalEqMatchesLost  Int                   @default(0)
+  accent              String?               @default("#40ba0b") @db.VarChar(255)
+  logo                String?               @db.VarChar(255)
+  primary             String?               @default("#a69977") @db.VarChar(255)
+  screen              String?               @default("#ffffff") @db.VarChar(255)
+  secondary           String?               @default("#292826") @db.VarChar(255)
+  districtId          String?               @db.Uuid
+  district_mu         Decimal?              @default(25) @db.Decimal
+  district_sigma      Decimal?              @default(8.3333333333) @db.Decimal
+  global_mu           Decimal?              @default(25) @db.Decimal
+  global_sigma        Decimal?              @default(8.3333333333) @db.Decimal
+  district_ranking    Decimal?              @db.Decimal
+  global_ranking      Decimal?              @db.Decimal
   Equation            Equation[]
   Job                 Job[]
+  District            District?             @relation(fields: [districtId], references: [id])
+  TeamEqEloHistory    TeamEqEloHistory[]
   TeamInEquationMatch TeamInEquationMatch[]
   User                User[]
 }
 
-model TeamInEquationMatch {
-  equationMatchId String        @db.Uuid
-  teamId          String        @db.Uuid
-  score           Int?          @default(0)
-  equationID      String        @db.Uuid
-  winner          Boolean?      @default(false)
-  Equation        Equation      @relation(fields: [equationID], references: [id])
-  EquationMatch   EquationMatch @relation(fields: [equationMatchId], references: [id])
-  Team            Team          @relation(fields: [teamId], references: [id])
+model TeamEqEloHistory {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  teamId    String   @db.Uuid
+  elo       Int
+  timestamp DateTime @db.Timestamp(6)
+  Team      Team     @relation(fields: [teamId], references: [id], onUpdate: Restrict)
+}
 
-  @@id([equationMatchId, teamId])
+model TeamInEquationMatch {
+  equationMatchId        String        @db.Uuid
+  teamId                 String        @db.Uuid
+  score                  Int?          @default(0)
+  equationID             String        @db.Uuid
+  winner                 Boolean?      @default(false)
+  id                     String        @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  district_mu_after      Decimal?      @db.Decimal
+  district_mu_before     Decimal?      @db.Decimal
+  district_ranking_after Decimal?      @db.Decimal
+  district_sigma_after   Decimal?      @db.Decimal
+  district_sigma_before  Decimal?      @db.Decimal
+  global_mu_after        Decimal?      @db.Decimal
+  global_mu_before       Decimal?      @db.Decimal
+  global_ranking_after   Decimal?      @db.Decimal
+  global_sigma_after     Decimal?      @db.Decimal
+  global_sigma_before    Decimal?      @db.Decimal
+  districtId             String?       @db.Uuid
+  Equation               Equation      @relation(fields: [equationID], references: [id])
+  EquationMatch          EquationMatch @relation(fields: [equationMatchId], references: [id])
+  Team                   Team          @relation(fields: [teamId], references: [id])
+}
+
+model District {
+  id   String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name String  @unique
+  logo String?
+  Team Team[]
 }
 
 model User {
-  id            String     @id @default(uuid()) @db.Uuid
+  id            String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name          String     @unique @db.VarChar(255)
   epic_id       String?    @unique @db.VarChar(255)
   email         String?    @unique
   image         String?
-  team_id       String?    @db.Uuid
+  team_id       String?    @default("e968e4fc-80e6-4868-8e83-d6451c2bfcaa") @db.Uuid
   emailVerified DateTime?
   discord_id    String     @default(dbgenerated("('@'::text || (name)::text)")) @db.VarChar(255)
-  accounts      Account[]
+  Account       Account[]
   Equation      Equation[]
-  sessions      Session[]
+  Session       Session[]
   Team          Team?      @relation(fields: [team_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  perm_id       String?    @db.Uuid
+  Perm          Perms?     @relation(fields: [perm_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
 }
 
 model VerificationToken {
@@ -118,20 +176,11 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-view TeamView {
-  team_id         String  @id @db.Uuid
-  name            String? @db.VarChar(255)
-  eq_elo          Int?
-  trained_elo     Int?
-  eqmatcheswon    BigInt? @default(0)
-  eqmatcheslost   BigInt? @default(0)
-  eqmatchesplayed BigInt?
-}
-
 enum ApiAccess {
   READONLY
   READWRITE
   READWRITEDELETE
+  ADMIN
 }
 
 enum enums_jobs_status {
@@ -139,4 +188,13 @@ enum enums_jobs_status {
   PROCESSING
   COMPLETED
   FAILED
+}
+
+enum MatchStatus {
+  PENDING
+  PLANNED
+  STARTED
+  INPROGRESS
+  FINISHED
+  CANCELLED
 }

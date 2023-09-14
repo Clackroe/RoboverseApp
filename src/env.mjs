@@ -23,6 +23,10 @@ export const env = createEnv({
     // Add `.min(1) on ID and SECRET if you want to make sure they're not empty
     DISCORD_CLIENT_ID: z.string(),
     DISCORD_CLIENT_SECRET: z.string(),
+    BUCKET_ENDPOINT: z.string().url(),
+    BUCKET_NAME: z.string(),
+    BUCKET_KEY: z.string(),
+    BUCKET_SECRET: z.string(),
   },
 
   /**
@@ -45,6 +49,10 @@ export const env = createEnv({
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
     DISCORD_CLIENT_ID: process.env.DISCORD_CLIENT_ID,
     DISCORD_CLIENT_SECRET: process.env.DISCORD_CLIENT_SECRET,
+    BUCKET_ENDPOINT: process.env.BUCKET_ENDPOINT,
+    BUCKET_NAME: process.env.BUCKET_NAME,
+    BUCKET_KEY: process.env.BUCKET_KEY,
+    BUCKET_SECRET: process.env.BUCKET_SECRET,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.

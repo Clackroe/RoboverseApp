@@ -3,10 +3,18 @@ import { usePathname } from "next/navigation";
 import ProfilePicture from "./ProfilePicture";
 import Image from "next/image";
 import Link from "next/link";
+import { signOut } from "next-auth/react";
 
-const navPages = ["Teams", "Play", "Matches"];
+const navPages = [
+  { page: "Teams", comingSoon: false },
+  { page: "Play", comingSoon: false },
+  { page: "Matches", comingSoon: true },
+];
+import { api } from "~/utils/api";
 
 export default function Navbar() {
+  const user = api.users.getLoggedInUser.useQuery();
+
   const pathname = usePathname();
   return (
     <>
@@ -31,8 +39,9 @@ export default function Navbar() {
               return (
                 <li key={null}>
                   <Navbutton
-                    selected={pathname == "/" + page.toLowerCase()}
-                    page={page}
+                    selected={pathname == "/" + page.page.toLowerCase()}
+                    page={page.page}
+                    comingSoon={page.comingSoon}
                   ></Navbutton>
                 </li>
               );
@@ -40,8 +49,22 @@ export default function Navbar() {
           </ul>
         </div>
 
-        <div className="absolute right-2 top-5 px-4">
+        <div className="transit absolute -right-44 top-5 flex px-4 transition-transform duration-75 hover:-translate-x-32 ">
           <ProfilePicture width={80} height={80}></ProfilePicture>
+          <div className=" ml-4 flex flex-col items-center justify-center pr-16">
+            <Link
+              className="bg-green-500 px-5 text-slate-900 decoration-black hover:underline"
+              href={"/teams/" + user.data?.Team?.name}
+            >
+              TEAM
+            </Link>
+            <button
+              className=" px-4 decoration-green-500 hover:underline"
+              onClick={() => void signOut()}
+            >
+              LOGOUT
+            </button>
+          </div>
         </div>
       </div>
     </>
