@@ -1,30 +1,60 @@
+import { input } from "@nextui-org/react";
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 // import { ordinal, rate } from "openskill";
 
 export const teamsRouter = createTRPCRouter({
-  getAllTeamsWithGlobalRank: publicProcedure.query(async ({ ctx }) => {
-    return await ctx.prisma.team.findMany({
-      where: {
-        global_ranking: {
-          not: null,
-        },
-      },
-      orderBy: { global_ranking: "desc" },
-    });
-  }),
+  getAllTeamsWithRank: publicProcedure
+    .input(z.object({ districtId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      if (input.districtId === "Global") {
+        return await ctx.prisma.team.findMany({
+          where: {
+            global_ranking: {
+              not: null,
+            },
+          },
+          orderBy: { global_ranking: "desc" },
+        });
+      } else {
+        return await ctx.prisma.team.findMany({
+          where: {
+            district_ranking: {
+              not: null,
+            },
+            districtId: input.districtId,
+          },
+          orderBy: { district_ranking: "desc" },
+        });
+      }
+    }),
 
-  getTop3TeamsGlobal: publicProcedure.query(async ({ ctx }) => {
-    return await ctx.prisma.team.findMany({
-      where: {
-        global_ranking: {
-          not: null,
-        },
-      },
-      orderBy: { global_ranking: "desc" },
-      take: 3,
-    });
-  }),
+  getTop3Teams: publicProcedure
+    .input(z.object({ districtId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      if (input.districtId === "Global") {
+        return await ctx.prisma.team.findMany({
+          where: {
+            global_ranking: {
+              not: null,
+            },
+          },
+          orderBy: { global_ranking: "desc" },
+          take: 3,
+        });
+      } else {
+        return await ctx.prisma.team.findMany({
+          where: {
+            district_ranking: {
+              not: null,
+            },
+            districtId: input.districtId,
+          },
+          orderBy: { district_ranking: "desc" },
+          take: 3,
+        });
+      }
+    }),
 
   getTeamById: publicProcedure
     .input(z.object({ id: z.string() }))
