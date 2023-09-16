@@ -6,16 +6,20 @@ import "~/styles/globals.css";
 import Layout from "./components/Layout";
 import { Analytics } from "@vercel/analytics/react";
 
+import { NextUIProvider } from "@nextui-org/react";
+
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
   return (
     <SessionProvider session={session}>
-      <Layout>
-        <Component {...pageProps} />
-        <Analytics />
-      </Layout>
+      <NextUIProvider>
+        <Layout>
+          <Component {...pageProps} />
+          <Analytics />
+        </Layout>
+      </NextUIProvider>
     </SessionProvider>
   );
 };
