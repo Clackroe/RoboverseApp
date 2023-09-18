@@ -27,6 +27,8 @@ export const env = createEnv({
     BUCKET_NAME: z.string(),
     BUCKET_KEY: z.string(),
     BUCKET_SECRET: z.string(),
+    VESL_CLIENT_ID: z.string(),
+    VESL_CLIENT_SECRET: z.string(),
   },
 
   /**
@@ -53,6 +55,8 @@ export const env = createEnv({
     BUCKET_NAME: process.env.BUCKET_NAME,
     BUCKET_KEY: process.env.BUCKET_KEY,
     BUCKET_SECRET: process.env.BUCKET_SECRET,
+    VESL_CLIENT_ID: process.env.VESL_CLIENT_ID,
+    VESL_CLIENT_SECRET: process.env.VESL_CLIENT_SECRET,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.
