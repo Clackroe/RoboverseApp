@@ -59,11 +59,13 @@ export const authOptions: NextAuthOptions = {
       id: "vesl",
       name: "Vesl",
       type: "oauth",
-      authorization: "https://vesl.gg/version-test/login",
-      token: "https://app.vesl.gg/version-test/api/1.1/obj/user/",
-      userinfo: "https://app.vesl.gg/version-test/api/1.1/obj/user/",
+      authorization: "https://app.vesl.gg/version-test/api/1.1/oauth/authorize",
+      token: "https://app.vesl.gg/version-test/api/1.1/oauth/access_token",
+      userinfo: "https://app.vesl.gg/version-test/api/1.1/obj/user",
+      // "https://app.vesl.gg/version-test/api/1.1/obj/user?constraints=[{'key':'Username','onstraint_type':'equals','value':'StarLord'}]",
       clientId: env.VESL_CLIENT_ID,
       clientSecret: env.VESL_CLIENT_SECRET,
+
       profile: (profile) => {
         console.log("profile", profile);
         return {
