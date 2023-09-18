@@ -6,6 +6,7 @@ import {
   type DefaultSession,
 } from "next-auth";
 import DiscordProvider from "next-auth/providers/discord";
+import OAuthProvider from "next-auth/providers/oauth";
 import { type ReactNode } from "react";
 import { env } from "~/env.mjs";
 import { prisma } from "~/server/db";
@@ -54,6 +55,26 @@ export const authOptions: NextAuthOptions = {
       clientId: env.DISCORD_CLIENT_ID,
       clientSecret: env.DISCORD_CLIENT_SECRET,
     }),
+    {
+      id: "vesl",
+      name: "Vesl",
+      type: "oauth",
+      authorization: "https://vesl.gg/version-test/login",
+      token: "https://app.vesl.gg/version-test/api/1.1/obj/user/",
+      userinfo: "https://app.vesl.gg/version-test/api/1.1/obj/user/",
+      clientId: env.VESL_CLIENT_ID,
+      clientSecret: env.VESL_CLIENT_SECRET,
+      profile: (profile) => {
+        console.log("profile", profile);
+        return {
+          id: profile.id,
+          name: profile.name,
+          email: profile.email,
+          image: profile.image,
+        };
+      },
+    },
+
     /**
      * ...add more providers here.
      *
