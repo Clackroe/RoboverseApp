@@ -13,15 +13,15 @@ export default function HomePage() {
   }
   return (
     <div className="flex h-auto w-auto items-center justify-center align-middle">
-      <div className="flex flex-col items-center justify-center align-middle">
-        {/* <button
+      {/* <div className="flex flex-col items-center justify-center align-middle">
+        <button
           onClick={() =>
-            handleUpload("DefaultPFP4.png", "./public/DefaultPFP4.png")
+            handleUpload("exampleTeam2.png", "./public/Myers_Park_Favicon.png")
           }
         >
           Upload
-        </button> */}
-      </div>
+        </button>
+      </div> */}
     </div>
   );
 }
