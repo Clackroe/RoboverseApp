@@ -55,27 +55,27 @@ export const authOptions: NextAuthOptions = {
       clientId: env.DISCORD_CLIENT_ID,
       clientSecret: env.DISCORD_CLIENT_SECRET,
     }),
-    {
-      id: "vesl",
-      name: "Vesl",
-      type: "oauth",
-      authorization: "https://app.vesl.gg/version-test/api/1.1/oauth/authorize",
-      token: "https://app.vesl.gg/version-test/api/1.1/oauth/access_token",
-      userinfo: "https://app.vesl.gg/version-test/api/1.1/obj/user",
-      // "https://app.vesl.gg/version-test/api/1.1/obj/user?constraints=[{'key':'Username','onstraint_type':'equals','value':'StarLord'}]",
-      clientId: env.VESL_CLIENT_ID,
-      clientSecret: env.VESL_CLIENT_SECRET,
+    // {
+    //   id: "vesl",
+    //   name: "Vesl",
+    //   type: "oauth",
+    //   authorization: "https://app.vesl.gg/version-test/api/1.1/oauth/authorize",
+    //   token: "https://app.vesl.gg/version-test/api/1.1/oauth/access_token",
+    //   userinfo: "https://app.vesl.gg/version-test/api/1.1/obj/user",
+    //   // "https://app.vesl.gg/version-test/api/1.1/obj/user?constraints=[{'key':'Username','onstraint_type':'equals','value':'StarLord'}]",
+    //   clientId: env.VESL_CLIENT_ID,
+    //   clientSecret: env.VESL_CLIENT_SECRET,
 
-      profile: (profile) => {
-        console.log("profile", profile);
-        return {
-          id: profile.id,
-          name: profile.name,
-          email: profile.email,
-          image: profile.image,
-        };
-      },
-    },
+    //   profile: (profile) => {
+    //     console.log("profile", profile);
+    //     return {
+    //       id: profile.id,
+    //       name: profile.name,
+    //       email: profile.email,
+    //       image: profile.image,
+    //     };
+    //   },
+    // },
 
     /**
      * ...add more providers here.

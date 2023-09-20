@@ -49,7 +49,7 @@ export default function TeamsList(props: { distID: string }) {
               Total Losses
             </TableColumn>
             <TableColumn className="px-4  py-2 text-black">
-              {props.distID == "Global" ? "Global" : "District"} Ranting
+              {props.distID == "Global" ? "Global" : "District"} Rating
             </TableColumn>
           </TableHeader>
           <TableBody
